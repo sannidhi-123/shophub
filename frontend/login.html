@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In / Register — ShopHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/theme-upgrade.css" />
+  <style>
+    :root {
+      --primary: #E8503A; --primary-hover: #d4412e; --primary-light: #fef0ee;
+      --text: #2d2d3a; --text-muted: #9ca3af;
+      --bg: #f5f5f7; --bg-alt: #ededf0; --white: #ffffff; --border: #e5e7eb;
+    }
+    [data-theme="dark"] {
+      --primary: #ff6b52; --primary-hover: #e8503a; --primary-light: rgba(232,80,58,0.15);
+      --text: #e8e8f0; --text-muted: #718096;
+      --bg: #0f0f1a; --bg-alt: #1a1a2e; --white: #1a1a2e; --border: #2d2d4e;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ── Navbar ── */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px; background: var(--white); border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 22px; font-weight: 800; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--primary); }
+    .dark-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-alt); border: 1px solid var(--border);
+      font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Layout ── */
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white); border-radius: 20px; border: 1px solid var(--border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10); width: 100%; max-width: 440px; padding: 40px 36px;
+    }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+      color: var(--text-muted); text-decoration: none; margin-bottom: 24px; transition: .2s;
+    }
+    .back:hover { color: var(--text); }
+    .card h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .card .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+
+    /* ── Mode banner ── */
+    .mode-banner {
+      display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+      border-radius: 10px; margin-bottom: 20px; font-size: 12.5px; font-weight: 500;
+    }
+    .mode-banner.online  { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .mode-banner.offline { background: #fefce8; color: #854d0e; border: 1px solid #fde68a; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex; background: var(--bg-alt); border-radius: 10px;
+      padding: 4px; gap: 4px; margin-bottom: 24px;
+    }
+    .tab {
+      flex: 1; padding: 10px; border: none; background: transparent;
+      border-radius: 8px; font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; color: var(--text-muted); transition: .2s;
+    }
+    .tab.active { background: var(--white); color: var(--primary); box-shadow: 0 1px 6px rgba(0,0,0,.09); }
+
+    /* ── Panel ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Demo hint ── */
+    .demo-box {
+      background: var(--bg-alt); border: 1px dashed var(--border); border-radius: 10px;
+      padding: 12px 14px; margin-bottom: 20px; font-size: 12.5px; color: var(--text-muted); line-height: 1.7;
+    }
+    .demo-box strong { color: var(--text); }
+    .demo-box code {
+      background: var(--white); border: 1px solid var(--border); padding: 1px 7px;
+      border-radius: 5px; font-size: 12px; color: var(--primary);
+    }
+
+    /* ── Alert ── */
+    .alert {
+      display: none; align-items: flex-start; gap: 10px;
+      padding: 12px 14px; border-radius: 10px; font-size: 13.5px;
+      line-height: 1.5; margin-bottom: 18px;
+    }
+    .alert.show { display: flex; }
+    .alert.error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .alert.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .alert i { margin-top: 2px; flex-shrink: 0; }
+
+    /* ── Field ── */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+
+    /* ── Input wrapper ── */
+    .iw { position: relative; }
+    .iw .ico {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); font-size: 14px; pointer-events: none;
+    }
+    .iw input {
+      width: 100%; padding: 12px 14px 12px 38px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--bg); color: var(--text);
+      font-size: 14px; font-family: inherit; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .iw input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(232,80,58,.12); }
+    .iw input::placeholder { color: var(--text-muted); }
+    .iw.has-eye input { padding-right: 42px; }
+    .eye-btn {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px;
+    }
+
+    /* ── Strength bar ── */
+    .s-bar { height: 4px; border-radius: 2px; background: var(--border); margin-top: 8px; overflow: hidden; }
+    .s-fill { height: 100%; border-radius: 2px; width: 0; transition: width .3s, background .3s; }
+    .s-fill.weak   { width: 33%; background: #ef4444; }
+    .s-fill.medium { width: 66%; background: #f59e0b; }
+    .s-fill.strong { width: 100%; background: #10b981; }
+    .s-label { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Button ── */
+    .btn {
+      width: 100%; padding: 14px; background: var(--primary); color: #fff;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: background .2s, transform .1s; margin-top: 8px;
+    }
+    .btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex; align-items: center; gap: 12px; margin: 20px 0;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Switch link ── */
+    .switch { text-align: center; font-size: 13px; color: var(--text-muted); }
+    .switch a { color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer; }
+    .switch a:hover { text-decoration: underline; }
+
+    /* ── Spinner ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2.5px solid rgba(255,255,255,.35); border-top-color: #fff;
+      border-radius: 50%; animation: spin .7s linear infinite;
+    }
+
+    @media (max-width: 480px) { .card { padding: 28px 18px; } }
+  </style>
+  <script>/* Prevent flash of wrong theme */
+    (function(){var t=localStorage.getItem("shophub_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="nav">
+    <a href="index.html" class="logo">Shop<span>Hub</span></a>
+    <button class="dark-btn" id="darkBtn" onclick="toggleTheme()">🌙</button>
+  </nav>
+
+  <main>
+    <div class="card">
+      <a href="index.html" class="back"><i class="fa-solid fa-arrow-left"></i> Back to store</a>
+      <h1>My Account</h1>
+      <p class="sub">Sign in or create a new ShopHub account</p>
+
+      <!-- Connection mode banner — filled by JS -->
+      <div class="mode-banner" id="modeBanner" style="display:none;"></div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" id="tabLogin"  onclick="switchTab('login')">Sign In</button>
+        <button class="tab"        id="tabSignup" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <!-- ══════════ SIGN IN PANEL ══════════ -->
+      <div class="panel active" id="loginPanel">
+        <div class="demo-box" id="loginDemoBox">
+          <strong>Demo account (offline mode):</strong><br>
+          <code>user@example.com</code> &nbsp;/&nbsp; <code>password123</code>
+        </div>
+
+        <div class="alert" id="loginAlert">
+          <i id="loginAlertIcon"></i>
+          <span id="loginAlertText"></span>
+        </div>
+
+        <div class="field">
+          <label for="loginEmail">Email address</label>
+          <div class="iw">
+            <i class="fa-regular fa-envelope ico"></i>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="loginPass">Password</label>
+          <div class="iw has-eye">
+            <i class="fa-solid fa-lock ico"></i>
+            <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password" />
+            <button class="eye-btn" type="button" onclick="toggleEye('loginPass','loginEyeIcon')">
+              <i id="loginEyeIcon" class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn" id="loginBtn" onclick="doLogin()">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </button>
+
+        <div class="divider">or</div>
+        <p class="switch">No account? <a onclick="switchTab('signup')">Create one free →</a></p>
+      </div>
+
+      <!-- ══════════ CREATE ACCOUNT PANEL ══════════ -->
+      <div class="panel" id="signupPanel">
+
+        <div class="alert" id="signupAlert">
+          <i id="signupAlertIcon"></i>
+          <span id="signupAlertText"></span>
+        </div>
+
+        <div class="field">
+          <label for="signupName">Full Name</label>
+          <div class="iw">
+            <i class="fa-solid fa-user ico"></i>
+            <input type="text" id="signupName" placeholder="e.g. Priya Sharma" autocomplete="name" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signupEmail">Email address</label>
+          <div class="iw">
+            <i class="fa-regular fa-envelope ico"></i>
+            <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signupPass">Password</label>
+          <div class="iw has-eye">
+            <i class="fa-solid fa-lock ico"></i>
+            <input type="password" id="signupPass" placeholder="Minimum 6 characters"
+              autocomplete="new-password" oninput="checkStrength(this.value)" />
+            <button class="eye-btn" type="button" onclick="toggleEye('signupPass','signupEyeIcon')">
+              <i id="signupEyeIcon" class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <div class="s-bar"><div class="s-fill" id="sFill"></div></div>
+          <p class="s-label" id="sLabel"></p>
+        </div>
+
+        <button class="btn" id="signupBtn" onclick="doSignup()">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </button>
+
+        <div class="divider">or</div>
+        <p class="switch">Already have an account? <a onclick="switchTab('login')">Sign in →</a></p>
+      </div>
+
+    </div>
+  </main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SHOPHUB — LOGIN / SIGNUP
+   Works in TWO modes automatically:
+   • ONLINE  — backend running at localhost:3000  (full API)
+   • OFFLINE — no backend needed (localStorage only)
+═══════════════════════════════════════════════════════════ */
+
+/* ── Theme ── */
+(function(){
+  const t = localStorage.getItem('shophub_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  const b = document.getElementById('darkBtn');
+  if (b) b.textContent = t === 'dark' ? '☀️' : '🌙';
+})();
+function toggleTheme(){
+  const c = document.documentElement.getAttribute('data-theme') || 'light';
+  const n = c === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', n);
+  localStorage.setItem('shophub_theme', n);
+  document.getElementById('darkBtn').textContent = n === 'dark' ? '☀️' : '🌙';
+}
+
+/* ── Backend detection ── */
+const BACKEND = 'http://localhost:3000';
+let USE_BACKEND = false;   // set after ping
+
+async function pingBackend() {
+  try {
+    const r = await fetch(BACKEND + '/api/health', { signal: AbortSignal.timeout(2000) });
+    const d = await r.json();
+    if (d.success || d.status) {
+      USE_BACKEND = true;
+      showBanner('online', '🟢 Connected to ShopHub server');
+      document.getElementById('loginDemoBox').innerHTML =
+        '<strong>Demo account:</strong><br>' +
+        '<code>user@example.com</code> &nbsp;/&nbsp; <code>password123</code>';
+    }
+  } catch {
+    USE_BACKEND = false;
+    showBanner('offline',
+      '🟡 Offline mode — accounts saved locally. ' +
+      'Run <strong>node server.js</strong> to use the backend.');
+    document.getElementById('loginDemoBox').innerHTML =
+      '<strong>Demo account (offline):</strong><br>' +
+      '<code>user@example.com</code> &nbsp;/&nbsp; <code>password123</code><br>' +
+      '<span style="font-size:11px;opacity:.8;">Tip: open <strong>localhost:3000</strong> after starting backend</span>';
+  }
+}
+
+function showBanner(type, msg) {
+  const b = document.getElementById('modeBanner');
+  b.style.display = 'flex';
+  b.className = 'mode-banner ' + type;
+  b.innerHTML = msg;
+}
+
+/* ── Offline user store (localStorage) ── */
+const USERS_KEY = 'shophub_offline_users';
+
+function getOfflineUsers() {
+  const raw = localStorage.getItem(USERS_KEY);
+  if (!raw) {
+    // seed one demo account
+    const demo = [{
+      id: 'demo-001', name: 'Demo User',
+      email: 'user@example.com', password: 'password123',
+      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Demo%20User',
+      wishlist: [], recentlyViewed: [], createdAt: new Date().toISOString()
+    }];
+    localStorage.setItem(USERS_KEY, JSON.stringify(demo));
+    return demo;
+  }
+  return JSON.parse(raw);
+}
+
+function saveOfflineUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+function offlineLogin(email, password) {
+  const users = getOfflineUsers();
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (!user)           throw new Error('No account found with this email. Please create one.');
+  if (user.password !== password) throw new Error('Incorrect password. Please try again.');
+  return user;
+}
+
+function offlineSignup(name, email, password) {
+  const users = getOfflineUsers();
+  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+    throw new Error('An account with this email already exists. Please sign in.');
+  }
+  const newUser = {
+    id: 'user-' + Date.now(),
+    name, email: email.toLowerCase(), password,
+    avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(name),
+    wishlist: [], recentlyViewed: [], createdAt: new Date().toISOString()
+  };
+  users.push(newUser);
+  saveOfflineUsers(users);
+  return newUser;
+}
+
+/* ── API call (online mode) ── */
+async function callAPI(endpoint, body) {
+  const res = await fetch(BACKEND + '/api' + endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Server error. Please try again.');
+  return data;
+}
+
+/* ── Save session + redirect ── */
+function saveSession(user, token) {
+  // ✅ FIX: Always store a token. In offline mode there's no real JWT,
+  // so we store "offline" as a placeholder. isLoggedIn() checks for
+  // the presence of this key — if it's missing, profile.html redirects
+  // back to Sign In even though the user just logged in successfully.
+  localStorage.setItem('shophub_token', token || 'offline');
+  localStorage.setItem('shophub_user', JSON.stringify({
+    id: user.id, name: user.name, email: user.email, avatar: user.avatar
+  }));
+}
+
+function redirectAfterAuth() {
+  const returnTo = sessionStorage.getItem('shophub_return') || 'index.html';
+  sessionStorage.removeItem('shophub_return');
+  window.location.href = returnTo;
+}
+
+/* ── Alert helpers ── */
+function showAlert(panelId, msg, type) {
+  const box  = document.getElementById(panelId + 'Alert');
+  const icon = document.getElementById(panelId + 'AlertIcon');
+  const text = document.getElementById(panelId + 'AlertText');
+  icon.className = type === 'error'
+    ? 'fa-solid fa-circle-exclamation'
+    : 'fa-solid fa-circle-check';
+  text.textContent = msg;
+  box.className = 'alert ' + type + ' show';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function clearAlert(panelId) {
+  document.getElementById(panelId + 'Alert').className = 'alert';
+}
+
+/* ── Tab switch ── */
+function switchTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active',  tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+  document.getElementById('loginPanel').classList.toggle('active',  tab === 'login');
+  document.getElementById('signupPanel').classList.toggle('active', tab === 'signup');
+  clearAlert('login');
+  clearAlert('signup');
+  setTimeout(() => {
+    const el = document.getElementById(tab === 'login' ? 'loginEmail' : 'signupName');
+    el && el.focus();
+  }, 60);
+}
+
+/* ── Password strength ── */
+function checkStrength(val) {
+  const fill  = document.getElementById('sFill');
+  const label = document.getElementById('sLabel');
+  if (!val) { fill.className = 's-fill'; label.textContent = ''; return; }
+  let score = 0;
+  if (val.length >= 6)          score++;
+  if (val.length >= 10)         score++;
+  if (/[A-Z]/.test(val))        score++;
+  if (/[0-9]/.test(val))        score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  if (score <= 1) { fill.className = 's-fill weak';   label.textContent = '🔴 Weak password'; }
+  else if (score <= 3) { fill.className = 's-fill medium'; label.textContent = '🟡 Medium password'; }
+  else                 { fill.className = 's-fill strong'; label.textContent = '🟢 Strong password'; }
+}
+
+/* ── Eye toggle ── */
+function toggleEye(inputId, iconId) {
+  const inp  = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  icon.className = show ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+}
+
+/* ── Validation ── */
+function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+/* ════════════════════════════════
+   SIGN IN
+════════════════════════════════ */
+async function doLogin() {
+  clearAlert('login');
+
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+
+  // Validate
+  if (!email)           { showAlert('login', 'Please enter your email address.', 'error'); document.getElementById('loginEmail').focus(); return; }
+  if (!isEmail(email))  { showAlert('login', 'Please enter a valid email (e.g. you@gmail.com).', 'error'); document.getElementById('loginEmail').focus(); return; }
+  if (!pass)            { showAlert('login', 'Please enter your password.', 'error'); document.getElementById('loginPass').focus(); return; }
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Signing in…';
+
+  try {
+    let user, token = null;
+
+    if (USE_BACKEND) {
+      // ── Online: call backend API ──
+      const data = await callAPI('/auth/login', { email, password: pass });
+      user  = data.user;
+      token = data.token;
+      showAlert('login', data.message || 'Welcome back! Redirecting…', 'success');
+    } else {
+      // ── Offline: check localStorage ──
+      user = offlineLogin(email, pass);
+      showAlert('login', `Welcome back, ${user.name}! 👋 Redirecting…`, 'success');
+    }
+
+    saveSession(user, token);
+    setTimeout(redirectAfterAuth, 1200);
+
+  } catch (err) {
+    showAlert('login', err.message || 'Login failed. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+    document.getElementById('loginPass').focus();
+  }
+}
+
+/* ════════════════════════════════
+   CREATE ACCOUNT (SIGN UP)
+════════════════════════════════ */
+async function doSignup() {
+  clearAlert('signup');
+
+  const name  = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pass  = document.getElementById('signupPass').value;
+
+  // Validate
+  if (!name)              { showAlert('signup', 'Please enter your full name.', 'error'); document.getElementById('signupName').focus(); return; }
+  if (!email)             { showAlert('signup', 'Please enter your email address.', 'error'); document.getElementById('signupEmail').focus(); return; }
+  if (!isEmail(email))    { showAlert('signup', 'Please enter a valid email (e.g. you@gmail.com).', 'error'); document.getElementById('signupEmail').focus(); return; }
+  if (pass.length < 6)    { showAlert('signup', 'Password must be at least 6 characters.', 'error'); document.getElementById('signupPass').focus(); return; }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating account…';
+
+  try {
+    let user, token = null;
+
+    if (USE_BACKEND) {
+      // ── Online: call backend API ──
+      const data = await callAPI('/auth/signup', { name, email, password: pass });
+      user  = data.user;
+      token = data.token;
+      showAlert('signup', data.message || 'Account created! Redirecting…', 'success');
+    } else {
+      // ── Offline: save to localStorage ──
+      user = offlineSignup(name, email, pass);
+      showAlert('signup', `Welcome to ShopHub, ${user.name}! 🎉 Redirecting…`, 'success');
+    }
+
+    saveSession(user, token);
+    setTimeout(redirectAfterAuth, 1200);
+
+  } catch (err) {
+    showAlert('signup', err.message || 'Signup failed. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Account';
+  }
+}
+
+/* ── Enter key support ── */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('loginPanel').classList.contains('active'))  doLogin();
+  else doSignup();
+});
+
+/* ── Run backend ping on load ── */
+pingBackend();
+</script>
+</body>
+</html>

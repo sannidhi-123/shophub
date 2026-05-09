@@ -1,0 +1,22 @@
+{
+  "orders": [
+    {
+      "orderId": "SH1777829037826",
+      "name": "Sannidhi Chouthayi",
+      "address": "mgblock",
+      "items": [
+        {
+          "productId": 10,
+          "name": "Ribbed Knit Crop Top",
+          "price": 899,
+          "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&q=80",
+          "category": "Women",
+          "quantity": 1
+        }
+      ],
+      "total": 899,
+      "status": "confirmed",
+      "placedAt": "2026-05-03T17:23:57.826Z"
+    }
+  ]
+}

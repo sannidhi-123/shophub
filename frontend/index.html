@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopHub — Discover Your Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme-upgrade.css">
+  <script>/* Prevent flash of wrong theme */
+    (function(){var t=localStorage.getItem("shophub_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+</head>
+<body>
+
+  <!-- ── Loading Screen ── -->
+  <div class="loader-overlay" id="loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- ── Navbar ── -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Shop<span>Hub</span></a>
+
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" id="searchInput"
+          placeholder="Search styles, brands, products…" autocomplete="off">
+        <!-- Clear search button (shown when text entered) -->
+        <button id="searchClearBtn" title="Clear search"
+          style="display:none;position:absolute;right:50px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:none;background:var(--text-muted,#9ca3af);color:#fff;font-size:13px;cursor:pointer;align-items:center;justify-content:center;line-height:1;">
+          ✕
+        </button>
+        <!-- Voice search -->
+        <button class="voice-btn" id="voiceBtn" title="Voice Search" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+          <i class="fa-solid fa-microphone" style="font-size: 15px;"></i>
+        </button>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Sign In / Profile (updated by JS) -->
+        <button class="btn-ghost" id="authBtn">Sign In</button>
+
+        <!-- Dark mode toggle -->
+        <button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
+
+        <!-- Cart -->
+        <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+
+        <!-- Mobile search -->
+        <button class="mobile-toggle" id="mobileSearch" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Mobile Search ── -->
+  <div class="mobile-search" id="mobileSearchBar" style="display:none;">
+    <div class="mobile-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="mobileSearchInput" placeholder="Search products…">
+    </div>
+  </div>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-gradient"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-tag"> New Arrivals This Week</div>
+        <h1>Discover Your<br><span>Perfect Style</span></h1>
+        <p class="hero-desc">40+ curated brands — affordable, on-trend, and delivered free.</p>
+        <div class="hero-buttons">
+          <button class="hero-btn-primary"
+            onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">
+            Shop Now
+          </button>
+          <button class="hero-btn-secondary" id="browseTrendsBtn">Browse Trends →</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong>40+</strong><p> Products</p></div>
+          <div class="stat"><strong>10+</strong><p>Brands</p></div>
+          <div class="stat"><strong>Free</strong><p>Returns</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features Bar ── -->
+  <section class="features">
+    <div class="container">
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon ship"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="feature-text"><p>Free Shipping</p><span>On all orders above ₹999</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon ret"><i class="fa-solid fa-rotate-left"></i></div>
+          <div class="feature-text"><p>Easy Returns</p><span>30-day hassle-free returns</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon sec"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="feature-text"><p>Secure Checkout</p><span>JWT + SSL encrypted</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon eco"><i class="fa-solid fa-leaf"></i></div>
+          <div class="feature-text"><p>Sustainable</p><span>Eco-friendly packaging</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Categories ── -->
+  <section class="categories">
+    <div class="container">
+      <div class="section-top">
+        <h2>Shop by Category</h2>
+        <a href="#" class="section-link" onclick="resetFilter()">View all <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="category-grid">
+        <div class="category-card" data-category="Men">
+          <div class="icon-box blue"><i class="fa-solid fa-shirt"></i></div>
+          <p>Men</p><span class="item-count">Fashion</span>
+        </div>
+        <div class="category-card" data-category="Women">
+          <div class="icon-box pink"><i class="fa-solid fa-person-dress"></i></div>
+          <p>Women</p><span class="item-count">Fashion</span>
+        </div>
+        <div class="category-card" data-category="Footwear">
+          <div class="icon-box violet"><i class="fa-solid fa-shoe-prints"></i></div>
+          <p>Footwear</p><span class="item-count">All sizes</span>
+        </div>
+        <div class="category-card" data-category="Electronics">
+          <div class="icon-box orange"><i class="fa-solid fa-mobile-screen"></i></div>
+          <p>Electronics</p><span class="item-count">Gadgets</span>
+        </div>
+        <div class="category-card" data-category="Beauty">
+          <div class="icon-box green"><i class="fa-solid fa-spa"></i></div>
+          <p>Beauty</p><span class="item-count">Skincare & More</span>
+        </div>
+        <div class="category-card" data-category="Accessories">
+          <div class="icon-box purple"><i class="fa-solid fa-bag-shopping"></i></div>
+          <p>Accessories</p><span class="item-count">Bags, Jewellery</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Trending Products (Top Rated) ── -->
+  <section style="padding:40px 0 0;" id="trendingSection">
+    <div class="container">
+      <div class="section-top">
+        <h2>🔥 Trending Now</h2>
+        <span style="font-size:13px;color:var(--text-muted);">Top rated this week</span>
+      </div>
+      <div class="product-grid" id="trendingGrid" style="margin-bottom:0;"></div>
+    </div>
+  </section>
+
+  <!-- ── Recently Viewed ── -->
+  <section style="padding:32px 0 0;" id="recentlyViewedSection" style="display:none;">
+    <div class="container">
+      <div class="recently-section">
+        <h3><i class="fa-regular fa-clock" style="color:var(--primary);"></i> Recently Viewed</h3>
+        <div class="recently-grid" id="recentlyGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── All Products ── -->
+  <section class="products" id="productsSection">
+    <div class="container">
+      <p class="section-subtitle">Our Full Collection</p>
+      <div class="section-header">
+        <h2>All Products</h2>
+        <div class="nav-arrows">
+          <button class="arrow-btn" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="arrow-btn" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="Men">Men</button>
+        <button class="filter-tab" data-filter="Women">Women</button>
+        <button class="filter-tab" data-filter="Footwear">Footwear</button>
+        <button class="filter-tab" data-filter="Electronics">Electronics</button>
+        <button class="filter-tab" data-filter="Beauty">Beauty</button>
+        <button class="filter-tab" data-filter="Accessories">Accessories</button>
+      </div>
+
+      <!-- Sort + Count bar -->
+      <div class="filter-bar">
+        <span id="productCount" style="font-size:13px;color:var(--text-muted);margin-right:auto;"></span>
+        <select class="sort-select" id="sortSelect">
+          <option value="">Sort: Featured</option>
+          <option value="price_asc">Price: Low → High</option>
+          <option value="price_desc">Price: High → Low</option>
+          <option value="rating">Top Rated</option>
+          <option value="discount">Best Discount</option>
+        </select>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+
+      <div class="view-all-container">
+        <button class="view-all-btn" onclick="resetFilter()">
+          View All Products <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Outfit Builder Banner ── -->
+  <section style="padding:40px 0;">
+    <div class="container">
+      <div class="outfit-section">
+        <div style="font-size:40px;margin-bottom:12px;">👗 + 👟 + 👜</div>
+        <h2>Build Your Outfit</h2>
+        <p>Mix & match items across categories. Add pieces to cart and create your perfect look.</p>
+        <button class="btn-outfit"
+          onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Start Building
+        </button>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- ── Image-Based AI Suggestions ── -->
+  <section style="padding:40px 0;" id="aiSuggestSection">
+    <div class="container">
+      <div style="background:linear-gradient(135deg,#1a1a2e,#2d1f4e);border-radius:20px;padding:40px;color:#fff;text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">📸</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;">Style Match — AI Suggestions</h2>
+        <p style="font-size:14px;opacity:.8;margin-bottom:24px;">Upload a photo of an outfit or style you love — we'll find similar products for you.</p>
+
+        <!-- Upload area -->
+        <label for="imageUpload" style="display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:var(--primary,#E8503A);color:#fff;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          <i class="fa-solid fa-image"></i> Choose Photo
+        </label>
+        <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
+
+        <!-- Image preview -->
+        <div style="margin-top:16px;">
+          <img id="imagePreview" src="" alt="Preview" style="display:none;max-height:180px;border-radius:12px;margin:0 auto;border:3px solid rgba(255,255,255,.2);">
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="suggestionSection" style="display:none;margin-top:24px;">
+        <div id="suggestionResults"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Project Star / Like Bar ── -->
+  <section style="padding: 20px 0;">
+    <div class="container">
+      <div id="projectStarBar"></div>
+    </div>
+  </section>
+
+  <!-- ── Newsletter ── -->
+  <section class="newsletter">
+    <div class="container">
+      <h2>Stay in the Loop</h2>
+      <p>Subscribe for exclusive deals, new arrivals, and style inspiration.</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" placeholder="Enter your email address" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">Shop<span>Hub</span></div>
+          <p>Your destination for affordable, on-trend fashion. Quality you can trust, style you'll love.</p>
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#" onclick="filterByCategory('Men')">Men</a></li>
+            <li><a href="#" onclick="filterByCategory('Women')">Women</a></li>
+            <li><a href="#" onclick="filterByCategory('Electronics')">Electronics</a></li>
+            <li><a href="#" onclick="filterByCategory('Beauty')">Beauty</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="login.html">Create Account</a></li>
+            <li><a href="profile.html">My Profile</a></li>
+            <li><a href="checkout.html">My Orders</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Help</h4>
+          <ul>
+            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Size Guide</a></li>
+            <li><a href="#">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 ShopHub Pro. All rights reserved. Built with ❤️</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Cart Overlay + Sidebar ── -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3>Your Cart (<span id="cartCount">0</span>)</h3>
+      <button class="cart-close" id="cartClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Subtotal</span>
+        <span id="cartTotal">₹0</span>
+      </div>
+      <button class="checkout-btn">Checkout <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMsg">Done!</span>
+  </div>
+
+  <!-- ── Scroll to Top ── -->
+  <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <script src="js/api.js"></script>
+  <script src="js/ratings.js"></script>
+  <script src="js/app.js"></script>
+  <!-- filterByCategory and resetFilter are defined in app.js and exposed on window -->
+</body>
+</html>

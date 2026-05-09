@@ -1,0 +1,49 @@
+[
+  {
+    "id": "demo-001",
+    "name": "Demo User",
+    "email": "user@example.com",
+    "password": "35aa8c3ba04ad993b2e1dd052cf714fd:1db9ec7b2cc9f33e4a19c7c28625901f5985225c1df414559d45700e96b8e34457ad74dea7bf2b814e59abca944383e884f39bd53638b11d50a8013bf88140a8",
+    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Demo%20User",
+    "wishlist": [
+      1,
+      7,
+      21
+    ],
+    "recentlyViewed": [
+      13,
+      26,
+      2
+    ],
+    "stylePrefs": [],
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "admin-001",
+    "name": "Admin User",
+    "email": "admin@shophub.com",
+    "password": "62114029ce6fd2480c57bb190800f11b:0aacf82896b14c8d2442f22813121e83867f243f0c6a306280b9071235f1d02f85678f6a21a051b5756763915e9b978f5160ed90dacc25c16a27115ce4e78ba8",
+    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Admin",
+    "wishlist": [],
+    "recentlyViewed": [],
+    "stylePrefs": [],
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "42f35ef5-3338-46b8-8363-ea8de2278f68",
+    "name": "Sannidhi Chouthayi",
+    "email": "sannidhichouthayi@gmail.com",
+    "password": "bb5d574ad7ab0b593e6859d1443e54d6:c88172e93dc8093fdcf9d59708ce98f501f5f646511e8bfe49ec579d2dea390536b7459346e6863abcc5b21a27fc28a6ad7c5cef9adce263cdb4ed0372a2742a",
+    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Sannidhi%20Chouthayi",
+    "wishlist": [],
+    "recentlyViewed": [
+      10,
+      21,
+      27,
+      29,
+      26
+    ],
+    "stylePrefs": [],
+    "createdAt": "2026-05-03T16:59:03.096Z"
+  }
+]

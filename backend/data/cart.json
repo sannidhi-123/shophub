@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "productId": 26,
+      "name": "Vitamin C Brightening Serum",
+      "price": 899,
+      "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
+      "category": "Beauty",
+      "quantity": 1
+    },
+    {
+      "productId": 34,
+      "name": "Women's Yoga Leggings",
+      "price": 1299,
+      "image": "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80",
+      "category": "Women",
+      "quantity": 1
+    }
+  ],
+  "updatedAt": "2026-05-03T18:56:07.434Z"
+}

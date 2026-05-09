@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — ShopHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme-upgrade.css">
+  <style>
+    body { min-height:100vh; }
+    .co-page { max-width:1060px; margin:0 auto; padding:36px 24px 80px; }
+    .co-page h1 { font-size:26px;font-weight:700;color:var(--text);margin-bottom:6px; }
+    .co-sub { font-size:14px;color:var(--text-muted);margin-bottom:32px; }
+    .co-grid { display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start; }
+    @media(max-width:760px){.co-grid{grid-template-columns:1fr;}}
+    .co-card { background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px; }
+    .co-title { display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--text);margin-bottom:22px; }
+    .step-num { width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center; }
+    .oi { display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border); }
+    .oi:last-child{border-bottom:none;}
+    .oi img { width:54px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--border);flex-shrink:0; }
+    .oi-info { flex:1; }
+    .oi-info h4 { font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px; }
+    .oi-info span { font-size:12px;color:var(--text-muted); }
+    .oi-price { font-size:14px;font-weight:700;color:var(--text);white-space:nowrap; }
+    .total-ln { display:flex;justify-content:space-between;font-size:14px;color:var(--text-muted);margin-bottom:10px; }
+    .total-ln.grand { font-size:17px;font-weight:700;color:var(--text);padding-top:12px;margin-top:4px;border-top:1px solid var(--border); }
+    .total-ln.grand span:last-child { color:var(--primary); }
+    .btn-place { width:100%;margin-top:20px;padding:16px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s; }
+    .btn-place:hover { background:var(--primary-hover); }
+    .btn-place:disabled { opacity:.6;cursor:not-allowed; }
+    .trust { display:flex;justify-content:center;gap:18px;margin-top:14px;flex-wrap:wrap; }
+    .trust-i { display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted); }
+    .trust-i i { color:var(--primary);font-size:12px; }
+    .err-box { display:none;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:12px 16px;font-size:13.5px;margin-bottom:16px;align-items:center;gap:10px; }
+    .err-box.show{display:flex;}
+    .success-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;padding:24px; }
+    .success-overlay.show{display:flex;}
+    .success-box { background:var(--white);border-radius:20px;padding:48px 40px;text-align:center;max-width:400px;width:100%;animation:pop .35s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+    .s-icon { width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;margin:0 auto 18px; }
+    .s-icon i{font-size:30px;color:#fff;}
+    .success-box h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+    .success-box p{font-size:14px;color:var(--text-muted);margin-bottom:5px;}
+    .order-id{display:inline-block;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--primary);margin:10px 0 22px;font-family:monospace;}
+    .btn-home{padding:13px 32px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
+    .btn-home:hover{background:var(--primary-hover);}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spinner{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:22px;}
+    .back-link:hover{color:var(--text);}
+    .empty-co{text-align:center;padding:70px 20px;color:var(--text-muted);}
+    .empty-co i{font-size:50px;opacity:.2;display:block;margin-bottom:16px;}
+
+    /* ── Saved address cards ── */
+    .addr-list { display:flex;flex-direction:column;gap:10px;margin-bottom:16px; }
+    .addr-radio-card { border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:.18s;display:flex;gap:12px;align-items:flex-start; }
+    .addr-radio-card:hover { border-color:var(--primary);background:var(--primary-light,#fef0ee); }
+    .addr-radio-card.selected { border-color:var(--primary);background:var(--primary-light,#fef0ee); }
+    .addr-radio-card input[type=radio] { margin-top:3px;accent-color:var(--primary);flex-shrink:0;width:16px;height:16px; }
+    .addr-card-body { flex:1; }
+    .addr-card-top { display:flex;align-items:center;gap:8px;margin-bottom:4px; }
+    .addr-type-chip { font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--text-muted); }
+    .addr-default-chip { font-size:10px;font-weight:700;background:var(--primary);color:#fff;border-radius:20px;padding:2px 8px; }
+    .addr-card-name { font-size:13px;font-weight:600;color:var(--text); }
+    .addr-card-line { font-size:12px;color:var(--text-muted);line-height:1.5;margin-top:2px; }
+    .addr-card-phone { font-size:12px;color:var(--text-muted);margin-top:3px; }
+    .btn-add-addr { width:100%;padding:11px;border:1.5px dashed var(--border);border-radius:12px;background:none;color:var(--primary);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:.18s;margin-bottom:4px; }
+    .btn-add-addr:hover { border-color:var(--primary);background:var(--primary-light,#fef0ee); }
+
+    /* ── Inline new-address form ── */
+    .new-addr-form { border:1.5px solid var(--primary);border-radius:12px;padding:18px;margin-top:12px;display:none; }
+    .new-addr-form.open { display:block; }
+    .naf-title { font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between; }
+    .naf-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+    @media(max-width:500px){ .naf-grid { grid-template-columns:1fr; } }
+    .naf-full { grid-column:1/-1; }
+    .naf-fg label { display:block;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase; }
+    .naf-fg input { width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;box-sizing:border-box;transition:.18s; }
+    .naf-fg input:focus { outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(232,80,58,.1); }
+    .naf-type-row { display:flex;gap:7px;margin-bottom:12px; }
+    .naf-type-btn { padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;background:none;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--text);transition:.15s; }
+    .naf-type-btn.active { border-color:var(--primary);background:var(--primary-light,#fef0ee);color:var(--primary); }
+    .naf-actions { display:flex;gap:9px;margin-top:14px; }
+    .naf-save { flex:1;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer; }
+    .naf-cancel { padding:11px 16px;background:none;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--text-muted); }
+
+    /* ── Name field (always shown) ── */
+    .co-name-row { margin-bottom:18px; }
+    .co-name-row label { display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:7px; }
+    .co-name-inp { width:100%;padding:11px 14px 11px 38px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;box-sizing:border-box;transition:.18s; }
+    .co-name-inp:focus { outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(232,80,58,.1); }
+    .co-name-wrap { position:relative; }
+    .co-name-wrap .co-fi { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px; }
+  </style>
+  <script>/* Prevent flash of wrong theme */
+    (function(){var t=localStorage.getItem("shophub_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+</head>
+<body>
+  <header class="navbar" style="position:relative;box-shadow:0 1px 0 var(--border);">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Shop<span>Hub</span></a>
+      <div style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+        <i class="fa-solid fa-lock" style="color:var(--primary);"></i> Secure Checkout
+      </div>
+    </div>
+  </header>
+
+  <main class="co-page">
+    <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to shopping</a>
+    <h1>Checkout</h1>
+    <p class="co-sub">Review your order and enter delivery details</p>
+
+    <div class="empty-co" id="emptyState" style="display:none;">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <p>Your cart is empty!</p>
+      <a href="index.html" style="padding:13px 28px;background:var(--primary);color:#fff;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-arrow-left"></i> Browse Products
+      </a>
+    </div>
+
+    <div class="co-grid" id="coGrid">
+      <div class="co-card">
+        <div class="co-title"><span class="step-num">1</span> Delivery Details</div>
+        <div class="err-box" id="formErr"><i class="fa-solid fa-circle-exclamation"></i><span id="formErrText"></span></div>
+
+        <!-- Full name (always visible) -->
+        <div class="co-name-row">
+          <label>Full Name *</label>
+          <div class="co-name-wrap">
+            <i class="fa-solid fa-user co-fi"></i>
+            <input type="text" id="coName" class="co-name-inp" placeholder="e.g. Sannidhi Chouthayi" autocomplete="name">
+          </div>
+        </div>
+
+        <!-- Saved address picker -->
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">
+          Deliver To *
+        </div>
+        <div class="addr-list" id="addrList">
+          <!-- filled by renderAddrPicker() -->
+        </div>
+
+        <button class="btn-add-addr" id="btnAddAddr" onclick="toggleNewAddrForm()">
+          <i class="fa-solid fa-plus"></i> Add New Address
+        </button>
+
+        <!-- Inline new-address form -->
+        <div class="new-addr-form" id="newAddrForm">
+          <div class="naf-title">
+            New Address
+            <button onclick="toggleNewAddrForm()" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-muted);">✕</button>
+          </div>
+          <div class="naf-type-row" id="nafTypeBtns">
+            <button class="naf-type-btn active" onclick="nafSelectType(this,'Home')"><i class="fa-solid fa-house"></i> Home</button>
+            <button class="naf-type-btn" onclick="nafSelectType(this,'Work')"><i class="fa-solid fa-briefcase"></i> Work</button>
+            <button class="naf-type-btn" onclick="nafSelectType(this,'Other')"><i class="fa-solid fa-location-dot"></i> Other</button>
+          </div>
+          <div class="naf-grid">
+            <div class="naf-fg"><label>Phone *</label><input type="tel" id="nafPhone" placeholder="10-digit number"></div>
+            <div class="naf-fg"><label>Pincode *</label><input type="text" id="nafPin" placeholder="6-digit pincode" maxlength="6"></div>
+            <div class="naf-fg naf-full"><label>Address Line 1 *</label><input type="text" id="nafLine1" placeholder="House/Flat no., Street name"></div>
+            <div class="naf-fg naf-full"><label>Area / Landmark (optional)</label><input type="text" id="nafLine2" placeholder="Area, Landmark"></div>
+            <div class="naf-fg naf-full"><label>City *</label><input type="text" id="nafCity" placeholder="City"></div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" id="nafDefault" style="accent-color:var(--primary);width:15px;height:15px;">
+            Set as default address
+          </label>
+          <div class="naf-actions">
+            <button class="naf-cancel" onclick="toggleNewAddrForm()">Cancel</button>
+            <button class="naf-save" onclick="saveNewAddr()"><i class="fa-solid fa-floppy-disk"></i> Save & Select</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="co-card">
+          <div class="co-title"><span class="step-num">2</span> Order Summary</div>
+          <div id="orderList" style="margin-bottom:18px;"></div>
+          <div style="border-top:1px solid var(--border);padding-top:16px;">
+            <div class="total-ln"><span>Subtotal</span><span id="coSub">₹0</span></div>
+            <div class="total-ln"><span>Delivery</span><span style="color:#10b981;font-weight:600;">FREE</span></div>
+            <div class="total-ln grand"><span>Total</span><span id="coTotal">₹0</span></div>
+          </div>
+          <button class="btn-place" id="placeBtn" onclick="placeOrder()">
+            <i class="fa-solid fa-bag-shopping"></i> Place Order
+          </button>
+          <div class="trust">
+            <div class="trust-i"><i class="fa-solid fa-lock"></i> SSL Secure</div>
+            <div class="trust-i"><i class="fa-solid fa-rotate-left"></i> Free Returns</div>
+            <div class="trust-i"><i class="fa-solid fa-shield-halved"></i> Protected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-box">
+      <div class="s-icon"><i class="fa-solid fa-check"></i></div>
+      <h2>Order Confirmed! 🎉</h2>
+      <p>Thank you for shopping with ShopHub!</p>
+      <p>Your order ID:</p>
+      <div class="order-id" id="successId">—</div>
+      <p>Estimated delivery: <strong>3–5 business days</strong></p>
+      <p style="margin-bottom:24px;font-size:13px;">You'll receive updates on your registered email.</p>
+      <button class="btn-home" onclick="window.location.href='index.html'">Continue Shopping</button>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const savedTheme = localStorage.getItem('shophub_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    /* ── State ── */
+    let cart          = JSON.parse(localStorage.getItem('shophub_cart') || '[]');
+    let userAddresses = JSON.parse(localStorage.getItem('shophub_addresses') || '[]');
+    let selectedAddrIdx = -1;   // index into userAddresses; -1 = none selected
+    let nafType       = 'Home';
+
+    /* ── Pre-fill name ── */
+    const user = getCurrentUser();
+    if (user) document.getElementById('coName').value = user.name || '';
+
+    /* ════ ADDRESS PICKER ════ */
+    function renderAddrPicker() {
+      const list = document.getElementById('addrList');
+      if (!userAddresses.length) {
+        list.innerHTML = '';
+        return;
+      }
+      list.innerHTML = userAddresses.map((a, i) => `
+        <label class="addr-radio-card ${i === selectedAddrIdx ? 'selected' : ''}" onclick="selectAddr(${i})">
+          <input type="radio" name="addrPick" value="${i}" ${i === selectedAddrIdx ? 'checked' : ''}>
+          <div class="addr-card-body">
+            <div class="addr-card-top">
+              <span class="addr-type-chip"><i class="fa-solid fa-${a.type==='Home'?'house':a.type==='Work'?'briefcase':'location-dot'}"></i> ${a.type}</span>
+              ${a.isDefault ? '<span class="addr-default-chip">Default</span>' : ''}
+            </div>
+            <div class="addr-card-name">${a.name} &nbsp;·&nbsp; <span style="font-weight:400;color:var(--text-muted)">${a.phone}</span></div>
+            <div class="addr-card-line">${a.line1}${a.line2 ? ', ' + a.line2 : ''}, ${a.city} — ${a.pin}</div>
+          </div>
+        </label>`).join('');
+    }
+
+    function selectAddr(i) {
+      selectedAddrIdx = i;
+      renderAddrPicker();
+    }
+
+    /* Auto-select default (or first) address on load */
+    (function autoSelectAddr() {
+      const defIdx = userAddresses.findIndex(a => a.isDefault);
+      selectedAddrIdx = defIdx >= 0 ? defIdx : (userAddresses.length ? 0 : -1);
+      renderAddrPicker();
+    })();
+
+    /* ════ NEW ADDRESS FORM (inline in checkout) ════ */
+    function toggleNewAddrForm() {
+      const form = document.getElementById('newAddrForm');
+      const isOpen = form.classList.toggle('open');
+      document.getElementById('btnAddAddr').style.display = isOpen ? 'none' : 'flex';
+      if (isOpen) {
+        // reset form
+        ['nafPhone','nafPin','nafLine1','nafLine2','nafCity'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('nafDefault').checked = userAddresses.length === 0;
+        nafType = 'Home';
+        document.querySelectorAll('#nafTypeBtns .naf-type-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+      }
+    }
+
+    function nafSelectType(btn, type) {
+      nafType = type;
+      document.querySelectorAll('#nafTypeBtns .naf-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function saveNewAddr() {
+      const phone = document.getElementById('nafPhone').value.trim();
+      const pin   = document.getElementById('nafPin').value.trim();
+      const line1 = document.getElementById('nafLine1').value.trim();
+      const city  = document.getElementById('nafCity').value.trim();
+      const name  = document.getElementById('coName').value.trim() || (user && user.name) || '';
+
+      if (!phone || !line1 || !city || !pin) {
+        alert('Please fill in Phone, Address, City and Pincode.');
+        return;
+      }
+
+      const isDefault = document.getElementById('nafDefault').checked;
+      if (isDefault) userAddresses = userAddresses.map(a => ({ ...a, isDefault: false }));
+
+      const addr = {
+        type: nafType,
+        name,
+        phone,
+        line1,
+        line2: document.getElementById('nafLine2').value.trim(),
+        city,
+        pin,
+        isDefault,
+      };
+
+      userAddresses.push(addr);
+      // Sync to localStorage — profile page reads the same key
+      localStorage.setItem('shophub_addresses', JSON.stringify(userAddresses));
+
+      // Auto-select the newly added address
+      selectedAddrIdx = userAddresses.length - 1;
+
+      // Close form and refresh picker
+      document.getElementById('newAddrForm').classList.remove('open');
+      document.getElementById('btnAddAddr').style.display = 'flex';
+      renderAddrPicker();
+    }
+
+    /* ════ ORDER SUMMARY ════ */
+    function render() {
+      const grid  = document.getElementById('coGrid');
+      const empty = document.getElementById('emptyState');
+      if (!cart.length) { grid.style.display = 'none'; empty.style.display = 'block'; return; }
+      grid.style.display = 'grid'; empty.style.display = 'none';
+      const sub = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      document.getElementById('orderList').innerHTML = cart.map(item => `
+        <div class="oi">
+          <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/fef0ee/E8503A?text=ShopHub'">
+          <div class="oi-info"><h4>${item.name}</h4><span>Qty: ${item.quantity} × ₹${item.price.toLocaleString()}</span></div>
+          <div class="oi-price">₹${(item.price * item.quantity).toLocaleString()}</div>
+        </div>`).join('');
+      document.getElementById('coSub').textContent   = `₹${sub.toLocaleString()}`;
+      document.getElementById('coTotal').textContent = `₹${sub.toLocaleString()}`;
+    }
+    render();
+
+    /* ════ VALIDATION & PLACE ORDER ════ */
+    function showErr(msg) {
+      const b = document.getElementById('formErr');
+      document.getElementById('formErrText').textContent = msg;
+      b.classList.add('show');
+      b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function placeOrder() {
+      document.getElementById('formErr').classList.remove('show');
+
+      const name = document.getElementById('coName').value.trim();
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      const btn   = document.getElementById('placeBtn');
+
+      if (!name) { showErr('Please enter your full name.'); return; }
+      if (selectedAddrIdx < 0 || !userAddresses[selectedAddrIdx]) {
+        showErr('Please select or add a delivery address.'); return;
+      }
+      if (!cart.length) { showErr('Your cart is empty!'); return; }
+
+      const selAddr = userAddresses[selectedAddrIdx];
+      const addressStr = `${selAddr.line1}${selAddr.line2 ? ', ' + selAddr.line2 : ''}, ${selAddr.city} — ${selAddr.pin}`;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Placing order…';
+
+      const now          = new Date();
+      const orderDate    = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      const deliveryDate = new Date(now.getTime() + 5 * 864e5).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      let orderId = 'SH' + Date.now();
+      try {
+        const result = await placeOrderAPI(name, addressStr, cart, total);
+        if (result.success) orderId = result.orderId || orderId;
+      } catch {}
+
+      const orderRecord = {
+        orderId,
+        name,
+        address:    addressStr,
+        addrDetail: selAddr,
+        date:       orderDate,
+        deliveryBy: deliveryDate,
+        placedAt:   now.toISOString(),
+        status:     'Processing',
+        total,
+        items: cart.map(i => ({
+          productId: i.productId,
+          id:        i.productId,
+          name:      i.name,
+          price:     i.price,
+          image:     i.image,
+          quantity:  i.quantity,
+        })),
+      };
+
+      const existing = JSON.parse(localStorage.getItem('shophub_orders') || '[]');
+      existing.unshift(orderRecord);
+      localStorage.setItem('shophub_orders', JSON.stringify(existing));
+      localStorage.removeItem('shophub_cart');
+      try { await clearCartAPI(); } catch {}
+
+      document.getElementById('successId').textContent = orderId;
+      document.getElementById('successOverlay').classList.add('show');
+    }
+  </script>
+</body>
+</html>

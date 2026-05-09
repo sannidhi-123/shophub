@@ -1,0 +1,21 @@
+# Get all products
+curl http://localhost:3000/api/products
+
+# Search for "shirt"
+curl http://localhost:3000/api/products?search=shirt
+
+# Add product #1 to cart
+curl -X POST http://localhost:3000/api/cart \
+  -H "Content-Type: application/json" \
+  -d '{"productId": 1, "quantity": 2}'
+
+# View cart
+curl http://localhost:3000/api/cart
+
+# Update quantity
+curl -X PUT http://localhost:3000/api/cart/1 \
+  -H "Content-Type: application/json" \
+  -d '{"quantity": 5}'
+
+# Remove from cart
+curl -X DELETE http://localhost:3000/api/cart/1
