@@ -88,23 +88,31 @@ A modern full-stack shopping platform with authentication, dark mode, AI-powered
 
 # 📸 Screenshots
 
-## 🏠 Homepage
-- Modern hero section
-- Search + categories
-- Product showcase
 
-## 🌙 Dark Mode
-- Fully themed dark interface
-- Persistent theme storage
 
-## 👤 Authentication
-- Login / Signup
-- Offline mode support
+<img width="1280" height="721" alt="image" src="https://github.com/user-attachments/assets/bccf5ecd-25a1-42c0-acf7-0043be4a205d" />
 
-## 🛒 Cart & Checkout
-- Quantity management
-- Checkout form
-- Order placement
+
+
+
+<img width="1280" height="722" alt="image" src="https://github.com/user-attachments/assets/66f416c7-9fdb-4f95-b5b1-357477456462" />
+
+
+
+
+<img width="1280" height="721" alt="image" src="https://github.com/user-attachments/assets/74457c63-8ed9-4f62-a86c-5a029aba5cb3" />
+
+
+
+
+<img width="1280" height="723" alt="image" src="https://github.com/user-attachments/assets/17765d08-9a44-40cd-9884-249c7ea1465f" />
+
+
+
+
+<img width="1280" height="723" alt="image" src="https://github.com/user-attachments/assets/5ee1f063-9d94-4338-b596-e5acb690919a" />
+
+
 
 ---
 
