@@ -2263,3 +2263,18 @@ img {
   opacity: 0 !important;
 }
 /* rogue :root block removed */
+@media (max-width: 768px) {
+
+  .nav-right .user-menu,
+  .nav-right .profile-btn {
+    display: flex !important;
+  }
+
+  .nav-right {
+    gap: 8px;
+  }
+
+  .search-bar {
+    display: none;
+  }
+}
